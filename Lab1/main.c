@@ -21,20 +21,19 @@ uint8_t get_digit(int16_t d, uint8_t m) {
 
 ISR(INT1_vect) {
   if ((PIND & (1 << 1)) != 0) {
-    EICRA = (1 << ISC11);
+    EICRA = (1 << ISC11)|( 1 << ISC21);
     if ((PIND & (1 << 0)) != 0) angle--;
     else angle++;
   } 
   else {
-      EICRA = (1 << ISC11) | (1 << ISC10);
+      EICRA = (1 << ISC11) | (1 << ISC10)| ( 1 << ISC21);
       if ((PIND & (1 << 0)) != 0) angle++;
       else angle--;
   }
+}
 
-  if ((PIND & (1<<2)) !=0 ) {
-    EICRA = (1 << ISC50);
-    if ((PIND & (1<<1)) !=0) angle = 0;
-  }
+ISR(INT2_vect) {
+  angle = 0;
 }
 
 void print_number(int8_t number, uint8_t place) {
@@ -65,8 +64,8 @@ void print_full_number(int16_t number) {
 
 int main()
 {
-  EICRA = (1 << ISC11);
-  EIMSK = 1 << INT1;
+  EICRA = (1 << ISC11)|( 1 << ISC21);
+  EIMSK = (1 << INT1) | (1 << INT2);
   DDRA = 0xFF;
   DDRC = 0xFF;
   sei();
